@@ -50,6 +50,6 @@ var operacion = function (num1, num2, str) { return __awaiter(_this, void 0, voi
         }
     });
 }); };
-operacion(2, 3, 'sumar');
-operacion(5, 2, 'restar');
-operacion(5, 2, 'dividir');
+operacion(7, 1, 'sumar');
+operacion(6, 1, 'restar');
+operacion(10, 2, 'dividir');

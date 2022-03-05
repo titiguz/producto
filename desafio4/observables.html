@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Desafio 04-1</title>
+		<style>
+			.mirror {
+				transform: scale(-1, 1);
+				-moz-transform: scale(-1, 1);
+				-webkit-transform: scale(-1, 1);
+				-o-transform: scale(-1, 1);
+				-ms-transform: scale(-1, 1);
+				transform: scale(-1, 1);
+			}
+			span {
+				display: Inline-block;
+				margin: 10px;
+				margin-left: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<span><input class="input" type="text" id="main" /></span>
+			<span class="mirror" id="mirror"></span>
+		</div>
+
+		<script type="text/javascript" src="https://unpkg.com/rxjs@%5E7/dist/bundles/rxjs.umd.min.js"></script>
+
+		<script type="text/javascript">
+			const { Observable, fromEvent, map } = rxjs;
+
+			window.onload = () => {
+				var main = document.getElementById('main');
+				var mirror = document.getElementById('mirror');
+
+				const miObservable = new Observable((obs) => {
+					let salida;
+					main.addEventListener('input', (e) => {
+						if (main.value.toLowerCase() === 'error') obs.error('UPS algo salió mal :(');
+						if (main.value.toLowerCase() === 'completo') obs.complete();
+						if (e.data == null) salida = mirror.innerText.substring(1);
+						salida = e.target.value;
+						obs.next(salida);
+					});
+				});
+
+				const miFuncionError = (msg) => {
+					console.log(`ERROR ---> ${msg}`);
+					main.disabled = true;
+					main.value = '';
+					mirror.innerText = '';
+					subs.unsubscribe();
+				};
+
+				const miFuncionComplete = () => {
+					console.log(`Ejecución completa :)`);
+					main.disabled = true;
+					main.value = '';
+					mirror.innerText = '';
+					subs.unsubscribe();
+				};
+
+				const miFuncionNext = (data) => {
+					mirror.innerText = data;
+				};
+
+				const handler = {
+					next: miFuncionNext,
+					error: miFuncionError,
+					complete: miFuncionComplete,
+				};
+
+				const subs = miObservable.subscribe(handler);
+
+				setTimeout(() => {
+					console.log('Se acabó el tiempo :(');
+					main.disabled = true;
+					main.value = '';
+					mirror.innerText = '';
+					subs.unsubscribe();
+				}, 10000);
+			};
+		</script>
+	</body>
+</html>

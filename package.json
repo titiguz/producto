@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "@reactivex/rxjs": "^6.6.7"
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "type":  "module" 
 }

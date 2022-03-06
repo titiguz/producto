@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSERVABLES TITI</title>
+</head>
+<body>
+    <div>
+        <label for="inputText">Ingrese palabra:</label>
+        <input type="text" name="inputText" id="inputText">
+        <span id="espejo" style="margin-left: 5px;"></span>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/8.0.0-alpha.2/rxjs.umd.min.js" integrity="sha512-OqhcXPOUizQsMGqilNNtN3bU3Sy9ELHyNm/WyjtlyJ/2/Wpl5PjqkvX1eAE5q2X74z2mnCqv4Lcvf7lqLOFb5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+    <script>
+        const {Observable, fromEvent, map} = rxjs;
+
+        const inputText = document.getElementById("inputText");
+        const espejo = document.getElementById("espejo");
+
+        const espejar = (str) => [...str].reverse().join("");
+
+        const finish = ()=>{
+            inputText.value = "";
+            inputText.disabled = true;
+            espejo.innerText = "";
+        }
+        
+        const textObservable = fromEvent(inputText, "keyup").pipe(map(event => {
+            if (event.target.value.includes("error")) {
+                finish();
+                throw new Error("ups algo salió mal :(");
+            }
+            if (event.target.value.includes("completo")) {
+                finish();
+                console.info("ejecución completa :)");
+            }
+            return event.target.value
+        }))
+
+        const subscriptor = textObservable.subscribe({
+            next: x => espejo.innerText = espejar(x),
+            error: err => console.error(err.message),
+            complete: end => console.log("finish")
+        })
+
+        setTimeout(() => {
+            subscriptor.unsubscribe();
+            finish();
+            console.log("¡Se acabó el tiempo de espera!");
+        }, 30000);
+
+    </script>
+</body>
